@@ -1,0 +1,1109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>釉藥程式2025.9.14</title>
+</head>
+<body link="#000000" vlink="#008080" background="https://blog-imgs-146.fc2.com/y/u/y/yuyinghuang/IMAGE12.jpg">
+  <!-- partial:index.partial.html -->
+  <meta charset="utf-8">
+  <title>釉式設計程式</title>
+  <script>
+        f = 0
+        f2 = 0
+        mg = 0
+        zr = 1 
+        kna_f = 0
+        mg_f = 0
+        ca_f = 0
+        al_f = 0
+        si_f = 0 
+        mg_f2 = 0
+        ca_f2 = 0
+        al_f2 = 0
+        si_f2 = 0
+        vv = 0
+        i = 0
+        j = 0
+        car = 0
+        total = 0
+        correct = 0
+        segar_mole = new Array(13)
+        min_mole = new Array(13)
+        t = new Array(13)
+        composition_mole = new Array(16)
+        molecular_weight = new Array(16)
+        composition_weight = new Array(16)
+        composition_in_percentage = new Array(16)
+        composition_in_percentage_int = new Array(16) 
+        ca_min = 0
+        mg_min = 0
+        al_min = 0
+        si_min = 0 
+        v1 = 0
+        v2 = 0
+        v3 = 0
+        v4 = 0
+        v5 = 0
+        v6 = 0
+        v7 = 0
+        v8 = 0
+        v9 = 0
+        v10 = 0
+        v11 = 0 
+        w1 = 0
+        w2 = 0
+        w3 = 0 
+        jen = 0
+        jen2 = 0   
+        ex_ave = 0
+        ex_si = 0.05
+        ex_al = 0.17
+        ex_kna = 4.11
+        ex_zn = 0.07
+        ex_ca = 1.63
+        ex_mg = 0.45
+        ex_ba = 1.73
+        ex_sr = 1.73   /*(還缺鈦鋯錫)*/
+
+        function refer(form)                            /*顯示Ca,Mg,Al,Si應輸入最少量*/ {
+            check_jen(form)                      /*顯示目前鹼性總莫耳數*/
+            if (form.f[0].checked) f = 1
+            if (form.f[1].checked) f = 2
+            if (form.f[2].checked) f = 3
+            if (form.f[3].checked) f = 4
+            if (form.f[4].checked) f = 5
+            if (form.f[5].checked) f = 6
+            if (form.f[6].checked) f = 7 
+            if (f == 1) { kna_f = 0.9325; mg_f = 0.0113; ca_f = 0.0563; al_f = 1.0288; si_f = 4.5572; };  /*霞正*/
+            if (f == 2) { kna_f = 0.8809; mg_f = 0.0447; ca_f = 0.0745; al_f = 0.9806; si_f = 9.4773; };  /*日化*/
+            if (f == 3) { kna_f = 0.9814; mg_f = 0.0060; ca_f = 0.0127; al_f = 1.0789; si_f = 6.7398; };  /*南非*/
+            if (f == 4) { kna_f = 0.8761; mg_f = 0.0154; ca_f = 0.1085; al_f = 0.9992; si_f = 9.8345; };  /*釜戶*/
+            if (f == 5) { kna_f = 0.9581; mg_f = 0.0132; ca_f = 0.0286; al_f = 0.9702; si_f = 6.4851; };  /*澳洲*/
+            if (f == 6) { kna_f = 0.9668; mg_f = 0.0181; ca_f = 0.0151; al_f = 1.1668; si_f = 6.4955; };  /*印度*/
+            if (f == 7) { kna_f = 0.9465; mg_f = 0.0108; ca_f = 0.0427; al_f = 1.0660; si_f = 6.0573; };  /*安養*/
+            if (f == 8) { kna_f = 0.; mg_f = 0.; ca_f = 0.; al_f = 1.; si_f = 6.; };  /*未用*/
+            if (f == 9) { kna_f = 0.; mg_f = 0.; ca_f = 0.; al_f = 1.; si_f = 6.; };  /*未用*/
+            if (f == 10) { kna_f = 0.; mg_f = 0.; ca_f = 0.; al_f = 1.; si_f = 6.; }; /*未用*/
+            if (f == 11) { kna_f = 0.; mg_f = 0.; ca_f = 0.; al_f = 1.; si_f = 6.; }; /*未用*/
+            if (form.kna.value == "") form.kna.value = "0"
+            f2 = parseFloat(form.kna.value) / kna_f 
+            ca_min = ca_f * f2
+            mg_min = mg_f * f2
+            al_min = al_f * f2
+            si_min = si_f * f2 
+            min_mole[1] = parseFloat(form.kna.value);
+            min_mole[2] = ca_min;
+            min_mole[5] = mg_min;
+            min_mole[7] = al_min;
+            min_mole[8] = si_min; 
+            form.Ca_min_message.value = Math.round(ca_min * 100000) / 100000
+            form.Mg_min_message.value = Math.round(mg_min * 100000) / 100000
+            form.Al_min_message.value = Math.round(al_min * 100000) / 100000
+            form.Si_min_message.value = Math.round(si_min * 100000) / 100000
+        }
+
+        function fill_Ca_min(form) {
+            form.ca.value = form.Ca_min_message.value
+            refer(form)
+            document.getElementById("ca").style.color = "black";
+        }
+        function fill_Mg_min(form) {
+            form.mg.value = form.Mg_min_message.value
+            refer(form)
+            document.getElementById("mg").style.color = "black";
+        }
+        function fill_Al_min(form) {
+            form.al.value = form.Al_min_message.value
+            refer(form)
+            document.getElementById("al").style.color = "black";
+        }
+        function fill_Si_min(form) {
+            form.si.value = form.Si_min_message.value
+            refer(form)
+            document.getElementById("si").style.color = "black";
+        }
+
+        function compare_kna(form, mole) { 
+            refer(form)
+            if (parseFloat(mole) < 0) {
+                window.alert("不可輸入負值 : ")
+                document.getElementById("kna").style.color = "red";
+                form.kna.blur()
+            } else {
+                document.getElementById("kna").style.color = "black";
+            }
+        }
+
+        function compare_ca(form, mole) { /*禁止Ca,Mg,Al,Si值太少*/
+            refer(form)
+            if (parseFloat(mole) < parseFloat(form.Ca_min_message.value) - 0.00001) {
+                window.alert("Ca不可小於最小值 : " + Math.round(ca_min * 100000) / 100000)
+                document.getElementById("ca").style.color = "red";
+                form.ca.blur()
+            } else if (parseFloat(form.ca.value) < 0 || parseFloat(form.ca.value) > 50) {
+                window.alert("Ca不可為負值或非數字 ")
+                document.getElementById("ca").style.color = "red";
+                form.ca.blur()
+            } else {
+                document.getElementById("ca").style.color = "black";
+            }
+        }
+        function compare_mg(form, mole) { /*禁止Ca,Mg,Al,Si值太少*/
+            refer(form)
+            if (parseFloat(mole) < parseFloat(form.Mg_min_message.value) - 0.00001) {
+                window.alert("Mg不可小於最小值 : " + Math.round(mg_min * 100000) / 100000)
+                document.getElementById("mg").style.color = "red";
+                form.mg.blur()
+            } else {
+                document.getElementById("mg").style.color = "black";
+            }
+        }
+        function compare_al(form, mole) { /*禁止Ca,Mg,Al,Si值太少*/
+            refer(form)
+            if (parseFloat(mole) < parseFloat(form.Al_min_message.value) - 0.00001) {
+                window.alert("Al不可小於最小值 : " + Math.round(al_min * 100000) / 100000)
+                document.getElementById("al").style.color = "red";
+                form.al.blur()
+            } else {
+                document.getElementById("al").style.color = "black";
+            }
+        }
+        function compare_si(form, mole) { /*禁止Ca,Mg,Al,Si值太少*/
+            refer(form)
+            if (parseFloat(mole) < parseFloat(form.Si_min_message.value) - 0.00001) {
+                window.alert("Si不可小於最小值 : " + Math.round(si_min * 100000) / 100000)
+                document.getElementById("si").style.color = "red";
+                form.si.blur()
+            } else {
+                document.getElementById("si").style.color = "black";
+            }
+        }
+
+        function reset_data(form) { /*按下"歸零"鍵，表格及變數歸零*/
+            form.kna.value = ""
+            form.ca.value = ""
+            form.ba.value = ""
+            form.zn.value = ""
+            form.mg.value = ""
+            form.sr.value = ""
+            form.al.value = ""
+            form.si.value = ""
+            form.ti.value = ""
+            form.zr.value = ""
+            form.sn.value = ""
+            /*     f=1     */
+            f2 = 0
+            /*     mg=1     */
+            /*     zr=1     */
+            kna_f = 0
+            mg_f = 0
+            ca_f = 0
+            al_f = 0
+            si_f = 0
+            i = 0
+            j = 0
+            total = 0
+            correct = 0
+            ca_min = 0
+            mg_min = 0
+            al_min = 0
+            si_min = 0
+            car = 0
+            jen = 0
+            jen2 = 0 
+            for (i = 0; i <= 12; i++) {
+                segar_mole[i] = 0
+                min_mole[i] = 0
+                t[i] = 0
+            }
+            for (i = 0; i <= 14; i++) {
+                composition_mole[i] = 0
+                molecular_weight[i] = 0
+                composition_weight[i] = 0
+                composition_in_percentage[i] = 0
+                composition_in_percentage_int[i] = 0
+                form.p[i].value = ""
+            }
+            form.r.value = ""
+            // form.ex_ave.value = ""
+            form.note.value = ""
+            /*  form.outcome.value=""  */
+            form.Ca_min_message.value = ""
+            form.Mg_min_message.value = ""
+            form.Al_min_message.value = ""
+            form.Si_min_message.value = ""
+        }
+
+        function check_jen(form) {      /*計算目前鹼性莫耳數*/
+            if (form.kna.value == "") form.kna.value = "0"
+            if (form.ca.value == "") form.ca.value = "0"
+            if (form.ba.value == "") form.ba.value = "0"
+            if (form.zn.value == "") form.zn.value = "0"
+            if (form.mg.value == "") form.mg.value = "0"
+            if (form.sr.value == "") form.sr.value = "0"
+            if (form.al.value != "") form.al.value = form.al.value
+            if (form.si.value != "") form.si.value = form.si.value
+            if (form.ti.value != "") form.ti.value = form.ti.value
+            if (form.zr.value != "") form.zr.value = form.zr.value
+            if (form.sn.value != "") form.sn.value = form.sn.value 
+            jen = parseFloat(form.kna.value) + parseFloat(form.ca.value) + parseFloat(form.ba.value) + parseFloat(form.zn.value) + parseFloat(form.mg.value) + parseFloat(form.sr.value) 
+            if (1 - jen < 0.002 & 1 - jen >= 0) {
+                jen = 1 
+            } 
+            jen = Math.round(jen * 1000000) / 1000000 
+            jen2 = 1 - jen
+            if (1 - jen >= 0) form.note.value = "目前鹼性莫耳數= " + jen + "  不足額：" + jen2.toFixed(4)
+            if (1 - jen < 0) form.note.value = "目前鹼性莫耳數= " + jen + "  不足額：" + jen2.toFixed(4)
+            if (form.kna.value == "0") form.kna.value = ""; else form.kna.value = form.kna.value
+            if (form.ca.value == "0") form.ca.value = ""; else form.ca.value = form.ca.value
+            if (form.ba.value == "0") form.ba.value = ""; else form.ba.value = form.ba.value
+            if (form.zn.value == "0") form.zn.value = ""; else form.zn.value = form.zn.value
+            if (form.mg.value == "0") form.mg.value = ""; else form.mg.value = form.mg.value
+            if (form.sr.value == "0") form.sr.value = ""; else form.sr.value = form.sr.value 
+        }
+        function ADD_Ca(form) { /*將鹼補足 1 mole  */
+            if (form.ca.value == "") form.ca.value = "0"
+            if (jen2 < 0 && form.ca.value < Math.abs(jen2)) {
+                form.ca.value = 0
+            } else {
+                form.ca.value = parseFloat(form.ca.value) + Math.round(jen2 * 1000000) / 1000000
+            } 
+            check_jen(form)
+        }
+        function ADD_Ba(form) {
+            if (form.ba.value == "") form.ba.value = "0"
+            if (jen2 < 0 && form.ba.value < Math.abs(jen2)) {
+                form.ba.value = 0
+            } else {
+                form.ba.value = parseFloat(form.ba.value) + Math.round(jen2 * 1000000) / 1000000
+            } 
+            check_jen(form)
+        }
+        function ADD_Zn(form) {
+            if (form.zn.value == "") form.zn.value = "0"
+            if (jen2 < 0 && form.zn.value < Math.abs(jen2)) {
+                form.zn.value = 0
+            } else {
+                form.zn.value = parseFloat(form.zn.value) + Math.round(jen2 * 1000000) / 1000000
+            } 
+            check_jen(form)
+        }
+        function ADD_Mg(form) {
+            if (form.mg.value == "") form.mg.value = "0"
+            if (jen2 < 0 && form.mg.value < Math.abs(jen2)) {
+                form.mg.value = 0
+            } else {
+                form.mg.value = parseFloat(form.mg.value) + Math.round(jen2 * 1000000) / 1000000
+            } 
+            check_jen(form)
+        }
+        function ADD_Sr(form) {
+            if (form.sr.value == "") form.sr.value = "0"
+            if (jen2 < 0 && form.sr.value < Math.abs(jen2)) {
+                form.sr.value = 0
+            } else {
+                form.sr.value = parseFloat(form.sr.value) + Math.round(jen2 * 1000000) / 1000000
+            } 
+            check_jen(form)
+        }
+
+        function check_percent(form) {   /*顯示目前原料百分比*/
+            var total_per
+            total_per = 0
+            for (i = 0; i <= 14; i++) {
+                if (form.p[i].value == "") form.p[i].value = "0"
+                composition_in_percentage[i] = parseFloat(form.p[i].value)
+                total_per += composition_in_percentage[i]
+            }
+            form.note.value = "目前原料百分比= " + total_per.toFixed(2)
+            for (i = 0; i <= 14; i++) {
+                if (form.p[i].value == 0) form.p[i].value = ""; else form.p[i].value = form.p[i].value
+                composition_in_percentage[i] = 0
+            }
+        }
+
+        function calculate_segar(form) {  /*主程式*/
+            vv = 0 
+            correct = 1 
+            refer(form)
+            check_jen(form)/*準備視窗警告 鹼總和不等於1*/
+            if (jen>1.01 || jen<0.99)
+                {window.alert("目前鹼mole總和不等於1，請修正再重新計算")} 
+            if (form.m[0].checked) mg = 1          /*白雲石*/
+            if (form.m[1].checked) mg = 2      /*滑石  */
+            if (form.m[2].checked) mg = 3      /*碳酸鎂*/
+            zr = 1                       /*一律使用矽酸鋯*/
+            if (form.ca.value != "" && parseFloat(form.ca.value) == 0) {
+                window.alert("不可輸入非數字字元，請重新輸入")
+                correct = 0
+            } 
+            if (form.ca.value == "") form.ca.value = "0"
+            if (form.ba.value == "") form.ba.value = "0"
+            if (form.zn.value == "") form.zn.value = "0"
+            if (form.mg.value == "") form.mg.value = "0"
+            if (form.sr.value == "") form.sr.value = "0"
+            if (form.al.value == "") form.al.value = "0"
+            if (form.si.value == "") form.si.value = "0"
+            if (form.ti.value == "") form.ti.value = "0"
+            if (form.zr.value == "") form.zr.value = "0"
+            if (form.sn.value == "") form.sn.value = "0"
+            /*檢查最小值 */
+            if (parseFloat(form.ca.value) < ca_min - 0.0001) {
+                window.alert("Ca不可小於最小值 : " + Math.round(ca_min * 100000) / 100000 + "mole ，因此無法計算！請重新輸入，再做計算！")
+                correct = 0
+            } 
+            if (parseFloat(form.mg.value) < mg_min - 0.0001) {
+                window.alert("Mg不可小於最小值 : " + Math.round(mg_min * 100000) / 100000 + "mole ，因此無法計算！請重新輸入，再做計算！")
+                correct = 0
+            }
+            if (parseFloat(form.al.value) < al_min - 0.0001) {
+                window.alert("Al不可小於最小值 : " + Math.round(al_min * 100000) / 100000 + "mole ，因此無法計算！請重新輸入，再做計算！")
+                correct = 0
+            }
+            if (parseFloat(form.si.value) < si_min - 0.0001) {
+                window.alert("Si不可小於最小值 : " + Math.round(si_min * 100000) / 100000 + "mole ，因此無法計算！請重新輸入，再做計算！")
+                correct = 0
+            }
+            if (parseFloat(form.kna.value) < 0 || parseFloat(form.ca.value) < 0 || parseFloat(form.ba.value) < 0 || parseFloat(form.zn.value) < 0 || parseFloat(form.mg.value) < 0 || parseFloat(parseFloat(form.sr.value)) < 0 || parseFloat(form.al.value) < 0 || parseFloat(form.si.value) < 0 || parseFloat(form.ti.value) < 0 || parseFloat(form.zr.value) < 0 || parseFloat(form.sn.value) < 0) {
+                window.alert("賽格釉式當中，mole數不可小於0，請修改後再重新計算!")
+                correct = 0
+            } 
+            segar_mole[1] = parseFloat(form.kna.value)
+            segar_mole[2] = parseFloat(form.ca.value)
+            segar_mole[3] = parseFloat(form.ba.value)
+            segar_mole[4] = parseFloat(form.zn.value)
+            segar_mole[5] = parseFloat(form.mg.value)
+            segar_mole[6] = parseFloat(form.sr.value)
+            segar_mole[7] = parseFloat(form.al.value)
+            segar_mole[8] = parseFloat(form.si.value)
+            segar_mole[9] = parseFloat(form.ti.value)
+            segar_mole[10] = parseFloat(form.zr.value)
+            segar_mole[11] = parseFloat(form.sn.value) 
+            car = 0
+            form.note.value = "無"
+            for (i = 1; i <= 6; i++)  car = car + segar_mole[i]
+            if (1 - car < 0.002) {
+                car = 1
+            } 
+            form.note.value = "鹼性mole數= " + Math.round(car * 100000) / 100000 
+            jen2 = 1 - jen
+            if (1 - jen >= 0) form.note.value = "目前鹼性莫耳數= " + jen + "  不足額：" + jen2.toFixed(4)
+            if (1 - jen < 0) form.note.value = "目前鹼性莫耳數= " + jen + "  不足額：" + jen2.toFixed(4)
+            for (i = 0; i <= 14; i++)    form.p[i].value = ""
+            form.r.value = ""
+            for (i = 1; i <= 12; i++) {
+                 if (!segar_mole[i]) segar_mole[i] = 0;
+                 if (!min_mole[i]) min_mole[i] = 0;
+                 t[i] = segar_mole[i] - min_mole[i] ? segar_mole[i] - min_mole[i]:0;    /* ← 扣長石的量 */
+            } 
+            composition_mole[0] = f2; t[1] = 0;        /* 長石  */
+            composition_mole[2] = t[3]; t[3] = 0;      /*  BaO  */
+            composition_mole[3] = t[4]; t[4] = 0;      /*  ZnO  */
+            composition_mole[5] = t[6]; t[6] = 0;      /*  SrO  */
+            composition_mole[11] = t[9]; t[9] = 0;     /*  TiO2 */
+            composition_mole[14] = t[11]; t[11] = 0;   /*  SnO2 */
+            if (t[10] > 0)      /*Zr有剩*/ {
+                if (zr == 2) {
+                    composition_mole[12] = t[10];   /* 氧化鋯 */
+                    t[10] = 0;
+                }
+                if (zr == 1) {
+                    if (t[8] >= t[10]) /*Si夠*/ {
+                        composition_mole[13] = t[10]; /* 矽酸鋯 */
+                        t[8] = t[8] - t[10];
+                        t[10] = 0;
+                    }
+                    if (t[8] < t[10]) /*Si不夠*/ {
+                        composition_mole[13] = t[8];  /* 矽酸鋯 */
+                        composition_mole[12] = t[10] - t[8]; /* 氧化鋯 */
+                        t[8] = 0;
+                     }
+                }
+            }
+            if (mg == 0)       /* Mg 抵銷 */ {
+                composition_mole[1] = t[2];      /* CaO  */
+                t[2] = 0;
+            } 
+            if (mg == 3) {       /*碳酸鎂*/
+                composition_mole[4] = t[5];    /*  MgO  */
+                t[5] = 0;
+                composition_mole[1] = t[2];    /*  CaO  */
+                t[2] = 0;
+            } 
+            if (mg == 1) {       /*白雲石*/ /*摘要1→→→→*/            if (t[2] >= t[5]) /* Ca>Mg */ {
+                    composition_mole[6] = t[5];   /*  白雲石 */
+                    composition_mole[4] = 0; /*  Mg  */
+                    composition_mole[1] = t[2] - t[5]; /*  Ca  */
+                    t[2] = 0;
+                    t[5] = 0;
+                } /*摘要1→→→→*/           if (t[5] > t[2]) /* Mg>Ca */ {
+                    composition_mole[6] = t[2];   /*  白雲石 */
+                    composition_mole[1] = 0; /*  Ca  */
+                    t[5] = t[5] - t[2];
+                    t[2] = 0;
+                    if (t[8] >= t[5] / 3 * 4)  /* Si夠,用滑石*/ {
+                        composition_mole[7] = t[5] / 3;  /* 滑石 */
+                        t[5] = 0;
+                        t[8] = t[8] - composition_mole[7] * 4;
+                    }
+                    if (t[8] < t[5] / 3 * 4) /* Si不夠,先用滑石,再用碳酸鎂*/ {
+                        composition_mole[7] = t[8] / 4;
+                        t[5] = t[5] - t[8] / 4 * 3;
+                        t[8] = 0;
+                        composition_mole[4] = t[5];
+                    } 
+                 }
+            }
+            if (mg == 2) {   /*滑石*/
+                 if (t[8] >= t[5] / 3 * 4)   /*矽夠用*/ {
+                    composition_mole[7] = t[5] / 3;  /* 滑石 */
+                    composition_mole[4] = 0; /*  MgCO3  */
+                    t[5] = 0;     /*Mg=0*/
+                    t[8] = t[8] - composition_mole[7] * 4;  /*Si用掉一些了*/
+                    composition_mole[1] = t[2];    /*  Ca不必拿去當白雲石，全部當碳酸鈣  */
+                    t[2] = 0;
+                }
+                if (t[8] < t[5] / 3 * 4)    /*矽不夠用*/ {
+                    composition_mole[7] = t[8] / 4;
+                    t[8] = 0;
+                    t[5] = t[5] - composition_mole[7] * 3;
+                    /*  與 if(mg==2)同   */
+                    if (t[2] > t[5]) /* Ca>Mg */ {
+                        composition_mole[6] = t[5];   /*  白雲石 */
+                        composition_mole[4] = 0; /*  MgCO3=0  */
+                        composition_mole[1] = t[2] - t[5]; /*  CaCO3  */
+                        t[5] = 0; 
+                     }
+                    if (t[5] >= t[2]) /* Mg>=Ca */ {
+                        composition_mole[6] = t[2];   /*  白雲石 */
+                        composition_mole[1] = 0; /*  CaCO3  */
+                         composition_mole[4] = t[5] - t[2];  /*  MgCO3  */
+                        t[2] = 0;
+                    } 
+                 }
+            }
+            if (t[7] > 0)        /*Al有剩*/ {
+                if (t[8] >= t[7] * 2)        /* Si 夠,用土*/ {
+                    composition_mole[8] = t[7];       /*  高嶺土  */
+                    t[7] = 0;
+                    t[8] = t[8] - composition_mole[8] * 2;
+                }
+                if (t[8] < t[7] * 2)        /* Si 不夠,用氧化鋁 */ {
+                    composition_mole[8] = t[8] / 2;
+                    t[8] = 0;
+                    t[7] = t[7] - composition_mole[8];
+                    composition_mole[9] = t[7];
+                    t[7] = 0;
+                }
+            }
+            composition_mole[10] = t[8];                      /*石英*/
+            t[8] = 0;
+            /*轉換為百分比*/
+            if (f == 1) molecular_weight[0] = 447;      /*霞正分子量*/
+            if (f == 2) molecular_weight[0] = 743;      /*日化分子量*/
+            if (f == 3) molecular_weight[0] = 600;      /*南非分子量*/
+            if (f == 4) molecular_weight[0] = 768;      /*釜戶分子量*/
+            if (f == 5) molecular_weight[0] = 580;      /*澳洲分子量*/    
+            if (f == 6) molecular_weight[0] = 596;      /*印度分子量*/
+            if (f == 7) molecular_weight[0] = 535;      /*安養分子量*/
+            if (f == 8) molecular_weight[0] = 0;                             /*  注意! 尚未設定  */
+            if (f == 9) molecular_weight[0] = 0;                             /*  注意! 尚未設定  */
+            /*各原料分子量*/
+            molecular_weight[1] = 100;
+            molecular_weight[2] = 197;
+            molecular_weight[3] = 81;
+            molecular_weight[4] = 84;
+            molecular_weight[5] = 148;
+            molecular_weight[6] = 184;
+            molecular_weight[7] = 379;
+            molecular_weight[8] = 258;
+            molecular_weight[9] = 102;
+            molecular_weight[10] = 60;
+            molecular_weight[11] = 80;
+            molecular_weight[12] = 123;
+            molecular_weight[13] = 183;
+            molecular_weight[14] = 151;
+            total = 0;
+            total100 = 0;
+            for (i = 0; i <= 14; i++) {
+                if(!composition_mole[i]) composition_mole[i] = 0;
+                composition_weight[i] = composition_mole[i] * molecular_weight[i];
+                total = total + composition_weight[i];
+            } 
+            for (i = 0; i <= 14; i++) {
+                composition_in_percentage[i] = composition_weight[i] / total * 100;
+                composition_in_percentage_int[i] = Math.round(composition_in_percentage[i] * 10) / 10
+                 if (composition_in_percentage_int[i] > 0.00001 && composition_in_percentage_int[i] < 100.1) {
+                    if (correct) form.p[i].value = composition_in_percentage[i];        /*填寫個成分百分比*/
+                }
+                composition_in_percentage_int[i] = 0
+            } 
+            if (segar_mole[8] + segar_mole[9] + segar_mole[10] + segar_mole[11] > 0 && segar_mole[7] > 0) {
+                ratio = (segar_mole[8] + segar_mole[9] + segar_mole[10] + segar_mole[11]) / segar_mole[7]
+                if (correct) form.r.value = "1:" + ratio.toFixed(1)                      /*填入中酸比*/
+            }
+            else form.r.value = "無"
+            let toint=Number(form.toint.checked)    /*  檢查是否有要取整數  */
+           if (toint==1) {
+                to_int(form)
+            } 
+            ex_ave = (parseFloat(form.si.value) * ex_si + parseFloat(form.al.value) * ex_al + parseFloat(form.kna.value) * ex_kna + parseFloat(form.zn.value) * ex_zn + parseFloat(form.ca.value) * ex_ca + parseFloat(form.mg.value) * ex_mg + parseFloat(form.ba.value) * ex_ba + parseFloat(form.sr.value) * ex_sr) / (parseFloat(form.si.value) + parseFloat(form.al.value) + parseFloat(form.kna.value) + parseFloat(form.zn.value) + parseFloat(form.ca.value) + parseFloat(form.mg.value) + parseFloat(form.ba.value) + parseFloat(form.sr.value)) 
+            // form.ex_ave.value = ex_ave.toFixed(2)       /*填入膨脹係數(還缺鈦鋯錫)*/ 
+            if (form.kna.value == "0") form.kna.value = ""
+            if (form.ca.value == "0") form.ca.value = ""
+            if (form.ba.value == "0") form.ba.value = ""
+            if (form.zn.value == "0") form.zn.value = ""
+            if (form.mg.value == "0") form.mg.value = ""
+            if (form.sr.value == "0") form.sr.value = ""
+            if (form.al.value == "0") form.al.value = ""
+            if (form.si.value == "0") form.si.value = ""
+            if (form.ti.value == "0") form.ti.value = ""
+            if (form.zr.value == "0") form.zr.value = ""
+            if (form.sn.value == "0") form.sn.value = ""
+            if (correct == 1) analysis(form)
+            clear_for_next()
+        }
+
+        function set_default_values(form) {
+            var random = parseFloat((Math.floor(Math.random() * (6 - 3) + 3) * 0.05).toFixed(2));
+            if (form.kna.value == 0){
+                window.alert("未輸入鉀鈉的莫耳數，自動帶入 " + random);
+                form.kna.value = random;
+            } 
+            refer(form)
+            fill_Mg_min(form);
+            fill_Al_min(form);
+            form.si.value = form.al.value * 10;
+            ADD_Ca(form);
+
+            if(parseFloat(form.ca.value)>0.75 ) { form.zn.value=0.1 ;  
+                                               form.ba.value=0.1 ; ADD_Ca(form)       } /* Ca不要太大否則不熟 */
+
+           ADD_Ca(form); /* 使鹼總和=1 */
+
+           form.al.value=parseFloat(form.al.value)+0.05;  /* Al 增加0.05 以獲得高嶺土 */
+
+            calculate_segar(form);
+            //to_int(form)
+        }
+
+        function clear_for_next()      /*將變數歸零以便下次計算*/ {
+            f = 1; f2 = 0; mg = 1; zr = 1; kna_f = 0; mg_f = 0; ca_f = 0; al_f = 0; si_f = 0; i = 0; j = 0; total = 0; ca_min = 0; mg_min = 0; al_min = 0; si_min = 0; ratio = 0
+            for (i = 0; i <= 12; i++) {
+                segar_mole[i] = 0
+                min_mole[i] = 0
+                t[i] = 0
+            }
+            for (i = 0; i <= 15; i++) {
+                composition_mole[i] = 0
+                molecular_weight[i] = 0
+                composition_weight[i] = 0
+                composition_in_percentage[i] = 0
+                composition_in_percentage_int[i] = 0
+            } 
+        }
+
+        function to_int(form) { /*百分比取至整數*/
+            for (i = 0; i <= 14; i++) {
+                if (form.p[i].value == "") form.p[i].value = "0"
+                composition_in_percentage[i] = parseFloat(form.p[i].value)
+                form.p[i].value = composition_in_percentage[i].toFixed(0)
+                if (form.p[i].value == "0") form.p[i].value = ""
+             }
+           /* check_percent(form) */
+        }
+
+        function to_to(form) { /*百分比取至小數一位*/
+            for (i = 0; i <= 14; i++) {
+                if (form.p[i].value == "") form.p[i].value = "0"
+                composition_in_percentage[i] = parseFloat(form.p[i].value)
+                form.p[i].value = composition_in_percentage[i].toFixed(1)
+                if (form.p[i].value == "0.0") form.p[i].value = ""
+             }
+            check_percent(form)
+        }
+
+        function bay(form) { /*百分比乘以倍數*/
+            for (i = 0; i <= 14; i++) {
+                if (form.p[i].value == "") form.p[i].value = "0"
+                composition_in_percentage[i] = parseFloat(form.p[i].value)
+                form.p[i].value = composition_in_percentage[i] * parseFloat(form.multiple_value.value)
+                if (form.p[i].value == "0") form.p[i].value = ""
+             }
+            check_percent(form)
+        }
+
+        function calculate_100(form)    /* 由百分比 算賽格 */ {
+            form.kna.value = ""
+            form.ca.value = ""
+            form.ba.value = ""
+            form.zn.value = ""
+            form.mg.value = ""
+            form.sr.value = ""
+            form.al.value = ""
+            form.si.value = ""
+            form.ti.value = ""
+            form.zr.value = ""
+            form.sn.value = ""
+    /*霞正*/     if (form.f[0].checked) { molecular_weight[0] = 447; kna_f2 = .9325; ca_f2 = .0563; mg_f2 = .0113; al_f2 = 1.0288; si_f2 = 4.5572 }
+    /*日化*/     if (form.f[1].checked) { molecular_weight[0] = 743; kna_f2 = .8809; ca_f2 = .0745; mg_f2 = .0447; al_f2 = .9806;  si_f2 = 9.4773 }
+    /*南非*/     if (form.f[2].checked) { molecular_weight[0] = 600; kna_f2 = .9814; ca_f2 = .0127; mg_f2 = .0060; al_f2 = 1.0789; si_f2 = 6.7398 }
+    /*釜戶*/     if (form.f[3].checked) { molecular_weight[0] = 768; kna_f2 = .8761; ca_f2 = .1085; mg_f2 = .0154; al_f2 = .9992;  si_f2 = 9.8345 }
+    /*澳洲*/     if (form.f[4].checked) { molecular_weight[0] = 580; kna_f2 = .9581; ca_f2 = .0286; mg_f2 = .0132; al_f2 = .9702;  si_f2=6.4651   }    
+    /*印度*/     if (form.f[5].checked) { molecular_weight[0] = 596; kna_f2 = .9668; ca_f2 = .0151; mg_f2 = .0181; al_f2 = 1.1668; si_f2 = 6.4955 }
+    /*安養*/     if (form.f[6].checked) { molecular_weight[0] = 535; kna_f2 = .9465; ca_f2 = .0427; mg_f2 = .0108; al_f2 = 1.0660; si_f2 = 6.0573 }
+            /*其他*/                                                       /*  注意! 尚未設定  */
+            molecular_weight[1] = 100;
+            molecular_weight[2] = 197;
+            molecular_weight[3] = 81;
+            molecular_weight[4] = 84;
+            molecular_weight[5] = 148;
+            molecular_weight[6] = 184;
+            molecular_weight[7] = 379;
+            molecular_weight[8] = 258;
+            molecular_weight[9] = 102;
+            molecular_weight[10] = 60;
+            molecular_weight[11] = 80;
+            molecular_weight[12] = 123;
+            molecular_weight[13] = 183;
+            molecular_weight[14] = 151;
+            total = 0
+            for (i = 1; i <= 11; i++) { segar_mole[i] = 0 }
+            for (i = 0; i <= 14; i++) {
+                if (form.p[i].value == "") form.p[i].value = "0"
+                composition_in_percentage[i] = parseFloat(form.p[i].value)
+                total += composition_in_percentage[i]
+                composition_mole[i] = composition_in_percentage[i] / molecular_weight[i];
+            }
+            segar_mole[1] = composition_mole[0] * kna_f2   /*kna*/
+            segar_mole[2] = composition_mole[1] + ca_f2 * composition_mole[0] + composition_mole[6]    /*ca*/
+            segar_mole[3] = composition_mole[2]     /*ba*/
+            segar_mole[4] = composition_mole[3]     /*zn*/
+            segar_mole[5] = composition_mole[4] + mg_f2 * composition_mole[0] + composition_mole[6] + 3 * composition_mole[7]      /*mg*/
+            segar_mole[6] = composition_mole[5]     /*sr*/
+            segar_mole[7] = composition_mole[9] + al_f2 * composition_mole[0] + composition_mole[8]       /*al*/
+            segar_mole[8] = composition_mole[10] + si_f2 * composition_mole[0] + composition_mole[7] * 4.0 + composition_mole[8] * 2.0 + composition_mole[13]          /*si*/
+            segar_mole[9] = composition_mole[11]     /*ti*/
+            segar_mole[10] = composition_mole[12] + composition_mole[13]  /*zr*/
+            segar_mole[11] = composition_mole[14]     /**/
+            /*normalize*/
+            correct = 1
+            var normal = 0
+            for (i = 1; i <= 6; i++) normal += segar_mole[i] 
+            if (normal == 0) {
+                normal = 1
+                window.alert("缺鹼性金屬！此非完整賽格釉式。");
+                form.note.value = form.note.value + " 鹼性金屬"
+            } 
+            if (correct == 1) {
+                for (i = 1; i <= 11; i++) { segar_mole[i] /= normal; segar_mole[i] = Math.round(segar_mole[i] * 100000) / 100000 }
+                if (segar_mole[1] > 0) form.kna.value = segar_mole[1]
+                if (segar_mole[2] > 0) form.ca.value = segar_mole[2]
+                if (segar_mole[3] > 0) form.ba.value = segar_mole[3]
+                if (segar_mole[4] > 0) form.zn.value = segar_mole[4]
+                if (segar_mole[5] > 0) form.mg.value = segar_mole[5]
+                if (segar_mole[6] > 0) form.sr.value = segar_mole[6]
+                if (segar_mole[7] > 0) form.al.value = segar_mole[7]
+                if (segar_mole[8] > 0) form.si.value = segar_mole[8]
+                if (segar_mole[9] > 0) form.ti.value = segar_mole[9]
+                if (segar_mole[10] > 0) form.zr.value = segar_mole[10]
+                if (segar_mole[11] > 0) form.sn.value = segar_mole[11] 
+                ex_ave = (segar_mole[8] * ex_si + segar_mole[7] * ex_al + segar_mole[1] * ex_kna + segar_mole[4] * ex_zn + segar_mole[2] * ex_ca + segar_mole[5] * ex_mg + segar_mole[3] * ex_ba + segar_mole[6] * ex_sr) / (segar_mole[8] + segar_mole[7] + segar_mole[1] + segar_mole[4] + segar_mole[2] + segar_mole[5] + segar_mole[3] + segar_mole[6]) 
+                // form.ex_ave.value = ex_ave.toFixed(2)      /*填入膨脹係數(還缺鈦鋯錫)*/ 
+                ratio = Math.round(100 * (segar_mole[8] + segar_mole[9] + segar_mole[10] + segar_mole[11]) / segar_mole[7]) / 100
+                form.r.value = "1:" + ratio
+                total = Math.round(total * 10000) / 10000
+                if (segar_mole[7] * segar_mole[8] == 0) form.r.value = "無"
+                form.note.value = "原料總和為" + total + "％"
+                refer(form)
+                analysis(form)
+            } 
+            for (i = 0; i <= 14; i++) { if (form.p[i].value == "0") form.p[i].value = "" }
+            if (form.kna.value == "0") form.kna.value = "" 
+            clear_for_next() 
+        }
+
+        function analysis(form) { /*釉式分析*/
+            /* form.outcome.value=""  */
+        }
+        /*<tr align=center> <th colspan=2> <font color=#a52a2a size=4>原料選擇</font>*/
+  </script>
+
+
+
+
+
+
+
+
+
+  <form>
+   <center>
+     <font size="6" color="#a52a2a"> 黃玉英的陶藝世界─釉料設計軟件 </font> <font size="3"> <font color="#a52a2a" size="2">2025.9.14修訂 </font>
+      <br>
+      <br>
+      <font size="1">
+        <br>
+     </font>
+     <center>
+      <table border="5" cellspace="2" bordercolor="#8fa500">
+       <tbody>
+        <tr align="center">
+         <td><font color="#a52a2a" size>長石種類</font></td>
+         <td>&nbsp;&nbsp; <input name="f" type="radio" checked="true" value="霞正">霞正&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input name="f" type="radio" value="日化">日化&nbsp; <input name="f" type="radio" value="南非">南非&nbsp; <input name="f" type="radio" value="釜戶">釜戶&nbsp;
+           <br>
+           &nbsp; <input name="f" type="radio" value="澳洲">澳洲&nbsp;&nbsp; <input name="f" type="radio" value="印度">印度&nbsp; <input name="f" type="radio" value="安養">安養&nbsp;</td>
+        </tr>
+        <tr align="center">
+         <td><font color="#a52a2a" size="3">鎂種類</font></td>
+         <td>
+          <spacer type="horizontal" size="16">
+           <input name="m" type="radio" value="白雲石">白雲石 &nbsp; <input name="m" type="radio" checked="true" value="滑石">滑石 &nbsp; <input name="m" type="radio" value="碳酸鎂">碳酸鎂
+           <br>
+          </spacer>
+         </td>
+        </tr>
+       </tbody>
+      </table>
+      <br>
+      <table border="5" cellspace="2" bordercolor="#8fa500">
+       <tbody>
+        <tr align="center">
+         <th colspan="2"><font color="#a52a2a" size="4"> 賽格釉式(莫耳數)</font></th>
+         <th rowspan="4"><font color="#008044" size="4">功能鍵</font>
+           <br>
+           <br>
+           <input type="button" value="→→" onclick="calculate_segar(this.form)">
+           <br>
+           <br>
+           <input type="button" value="←←" onclick="calculate_100(this.form)">
+           <br>
+           <br>
+           <input type="button" value="清零" onclick="reset_data(this.form)">
+           <br>
+           <br>
+           <!-- ★★★ 新增：存檔／載入 按鈕（僅插入，未改動原有內容） ★★★ -->
+           <input type="button" value="保存" onclick="saveData(this.form)">
+           &nbsp&nbsp&nbsp
+           <input type="button" value="打開" onclick="document.getElementById('loadFile').click()">
+           <input id="loadFile" type="file" accept="application/json" style="display:none" onchange="handleFile(this, this.form)">
+           <!-- ★★★ 以上為新增 ★★★ -->
+           <br>  
+           <br>
+           <!-- ★★★ 新增：上一步 / 下一步 ★★★ -->
+           <input type="button" value="上一步" onclick="undo(this.form)">
+           &nbsp&nbsp&nbsp
+           <input type="button" value="下一步" onclick="redo(this.form)">
+           <!-- ★★★ 新增結束 ★★★ -->
+           <br><br>
+           <font color="#008040" size="4">.............訊...息................</font>
+           <br>
+           <br>
+           <font color="#008040" size="3">中酸比<input type="text" name="r" value="" size="5"> 
+           <br>
+           (勿直接輸入中酸比)</font>
+
+           <br>
+           <br>
+           <br></th>
+         <th colspan="2"><font color="#a52a2a" size="4"> 原料百分比(％) &nbsp;&nbsp; <input name="toint" type="checkbox" value="取整數">取整數 &nbsp;&nbsp; <input type="button" value="X" onclick="bay(this.form)"> <input type="text" name="multiple_value" value="0.5" size="3"> </font></th>
+        </tr>
+        <tr align="center">
+         <td><font color="#a52a2a">鹼</font></td>
+         <td>鉀鈉(KNa)<input type="text" id="kna" name="kna" value="" size="8" onblur="compare_kna(this.form, this.form.kna.value)"> &nbsp; <input type="button" value="範例" onclick="set_default_values(this.form)">
+           <br>
+           <br>
+           鈣(Ca)<input type="text" id="ca" name="ca" value="" size="8" onblur="compare_ca(this.form, this.form.ca.value)">
+           <br>
+           <br>
+           &nbsp; 鋇(Ba)<input type="text" name="ba" value="" size="8" onblur="check_jen(this.form)">
+           <spacer type="horizontal" size="16">
+            &nbsp; 鋅(Zn)<input type="text" name="zn" value="" size="8" onblur="check_jen(this.form)">
+            <br>
+            <br>
+            &nbsp; 鎂(Mg)<input type="text" id="mg" name="mg" value="" size="8" onblur="compare_mg(this.form, this.form.mg.value)"> &nbsp; 鍶(Sr)<input type="text" name="sr" value="" size="8" onblur="check_jen(this.form)">
+           </spacer></td>
+         <td colspan="2" rowspan="3" align="left"><font size="3">
+            <spacer type="horizontal" size="16">
+            &nbsp; 長石<input type="text" name="p" value="" size="5" onblur="check_percent(this.form)"> &nbsp; 碳酸鈣<input type="text" name="p" value="" size="5" onblur="check_percent(this.form)">
+            <br>
+            <br>
+            &nbsp; 碳酸鋇<input type="text" name="p" value="" size="5" onblur="check_percent(this.form)"> 氧化鋅<input type="text" name="p" value="" size="5" onblur="check_percent(this.form)">
+            <br>
+            <br>
+            &nbsp; 碳酸鎂<input type="text" name="p" value="" size="5" onblur="check_percent(this.form)"> &nbsp; 碳酸鍶<input type="text" name="p" value="" size="5" onblur="check_percent(this.form)">
+            <br>
+            <br>
+            &nbsp; 白雲石<input type="text" name="p" value="" size="5" onblur="check_percent(this.form)">
+            <spacer type="horizontal" size="16">
+             &nbsp; 滑石<input type="text" name="p" value="" size="5" onblur="check_percent(this.form)">
+             <br>
+             <br>
+             &nbsp; 高嶺土(美國土)<input type="text" name="p" value="" size="5" onblur="check_percent(this.form)"> 氧化鋁<input type="text" name="p" value="" size="5" onblur="check_percent(this.form)">
+             <br>
+             <br>
+             &nbsp; 二氧化矽(硅石)<input type="text" name="p" value="" size="5" onblur="check_percent(this.form)">
+             <br>
+             <br>
+             &nbsp; 二氧化鈦(金紅石)<input type="text" name="p" value="" size="5" onblur="check_percent(this.form)">
+             <br>
+             <br>
+             &nbsp; 二氧化鋯<input type="text" name="p" value="" size="5" onblur="check_percent(this.form)"> 矽酸鋯<input type="text" name="p" value="" size="5" onblur="check_percent(this.form)">
+             <br>
+             <br>
+             &nbsp; 二氧化錫<input type="text" name="p" value="" size="5" onblur="check_percent(this.form)">
+            </spacer>
+           </spacer>
+          </font></td>
+        </tr>
+        <tr align="center">
+         <td><font color="#a52a2a">中</font></td>
+         <td><spacer type="horizontal" size="16"> 鋁(Al)<input type="text" id="al" name="al" value="" size="8" onblur="compare_al(this.form, this.form.al.value)"> </spacer></td>
+        </tr>
+        <tr align="center">
+         <td><font color="#a52a2a">酸</font></td>
+         <td>
+          <spacer type="horizontal" size="16">
+           矽(Si)<input type="text" id="si" name="si" value="" size="8" onblur="compare_si(this.form, this.form.si.value)"> &nbsp; 鈦(Ti)<input type="text" name="ti" value="" size="8" onblur="check_jen(this.form)">
+           <br>
+           <br>
+           &nbsp; 鋯(Zr)<input type="text" name="zr" value="" size="8" onblur="check_jen(this.form)"> <spacer type="horizontal" size="16"> &nbsp; 錫(Sn)<input type="text" name="sn" value="" size="8" onblur="check_jen(this.form)"> </spacer>
+          </spacer>
+         </td>
+        </tr>
+       </tbody>
+      </table>
+      <hr>
+      <table border="4" cellspace="10" bordercolor="#8fa503">
+       <tbody>
+        <tr align="center">
+         <th><font color="#a52a2a" size="3">提示欄 </font></th>
+         <th><font color="#008040" size="3"> &nbsp;鈣至少：<input type="text" name="Ca_min_message" value="" size="8"> <input type="button" value="↖" onclick="fill_Ca_min(this.form)"> &nbsp; &nbsp; 鎂至少：<input type="text" name="Mg_min_message" value="" size="8"> <input type="button" value="↖" onclick="fill_Mg_min(this.form)">
+           <br> &nbsp;鋁至少：<input type="text" name="Al_min_message" value="" size="8"> <input type="button" value="↖" onclick="fill_Al_min(this.form)"> &nbsp; &nbsp; 矽至少：<input type="text" name="Si_min_message" value="" size="8"> <input type="button" value="↖" onclick="fill_Si_min(this.form)"> </font></th>
+         <th><spacer type="horizontal" size="10"> <font color="#008040" size="3"> 總量：<input type="text" name="note" value="" size="40">
+             <br> 將上述數值送給： <input type="button" value="鈣↖" onclick="ADD_Ca(this.form)"> <input type="button" value="鋇↖" onclick="ADD_Ba(this.form)"> <input type="button" value="鋅↖" onclick="ADD_Zn(this.form)"> <input type="button" value="鎂↖" onclick="ADD_Mg(this.form)"> <input type="button" value="鍶↖" onclick="ADD_Sr(this.form)"> </font> </spacer></th>
+        </tr>
+       </tbody>
+      </table>
+     </center> 
+     <hr> </font>
+   </center>
+  </form>
+  <font size="3"> <font color="#008044" size="3"> 常見Q&amp;A： </font>
+    <br> 1、輸入賽格釉式時，為何有時跳出視窗，要求某些氧化物數值不得小於某值？
+    <br>
+    <font color="#008044" size="3"> 答：KNa由長石所提供，但長石提供KNa的同時，也一併提供Ca、Mg、Al、Si等成分，所以此時Ca、Mg、Al、Si的數量不可太小。
+    <br> 這如同牛肉可提供蛋白質，可是牛肉也同時另提供醣類、脂肪等成分。
+    <br> 吃一口牛肉獲得蛋白質的同時，不得要求醣類、脂肪為0。
+    <br></font> 2、輸入百分比後，按"←←"鍵，再按"→→"鍵，卻得不同到百分比數值？
+    <br>
+    <font color="#008044" size="3"> 答：原因有兩個：
+    <br> a.您輸入的百分比總和根本就不是100。本程式會自動將總和調為100，因此，每一種原料重量已被"等比例"調整，
+    <br> 使它們重量加起來為100克。
+    <br> b.提供鎂的原料有三種：白雲石、滑石、碳酸鎂。選用不同原料，算出來的百分比當然不同。不過，雖然它們百分比
+    <br> 釉式不同，但他們有相同的賽格釉式。(理論上，一個賽格釉式，可以算得無數種的百分比釉式。)
+    <br></font> 3、為何無鐵、銅.....等著色劑？
+    <br>
+    <font color="#008044" size="3"> 答：著色劑為外加成分，不包含在釉式中。
+    <br></font>
+    <br>
+    <br> 監製：<a href="mailto:vesta_huang@yahoo.com.tw ">黃玉英</a> vesta_huang@yahoo.com.tw
+    <br> 設計人：<a href="mailto:yuhyin.tw@yahoo.com.tw ">邱育民</a> yuhyin.tw@yahoo.com.tw
+    <br> 尊重智慧財產，請勿隨意複製，或修改。
+    <br>
+    <hr>
+    <center>
+      <br>
+      <font color="#a52a2a" size="5"> <a href="https://www.facebook.com/%E9%BB%83%E7%8E%89%E8%8B%B1-%E9%99%B6%E8%97%9D%E7%90%89%E7%92%83-261133624087947/"> 粉絲專頁有更多圖片喔！</a> </font>
+      <br>
+      <br>
+    </center>
+    <!-- partial --></font>
+
+  <!-- ★★★ 新增：存檔/載入功能的腳本（不影響原本邏輯） ★★★ -->
+  <script>
+    // 將表單值序列化為 JSON（保留同名欄位的順序，例如 p[]）
+    function serializeForm(form){
+      const data = { fields:{} , radios:{} , checks:{} };
+      const inputs = form.querySelectorAll('input, textarea, select');
+
+      // 先收集同名的 text/number 欄位（像 p）
+      const nameCount = {};
+      inputs.forEach(el=>{
+        if(!el.name) return;
+        if(el.type==='radio') return;
+        if(el.type==='checkbox') return;
+        nameCount[el.name]=(nameCount[el.name]||0)+1;
+      });
+
+      // 一次建立陣列容器
+      Object.keys(nameCount).forEach(n=>{
+        if(nameCount[n]>1){ data.fields[n]=[]; }
+      });
+
+      inputs.forEach(el=>{
+        if(!el.name) return;
+        if(el.type==='radio'){
+          const list = form.querySelectorAll(`input[type="radio"][name="${el.name}"]`);
+          let idx = -1;
+          list.forEach((r,i)=>{ if(r.checked) idx=i;});
+          data.radios[el.name]=idx;
+        }else if(el.type==='checkbox'){
+          data.checks[el.name]=el.checked?1:0;
+        }else{
+          if(Array.isArray(data.fields[el.name])){
+            data.fields[el.name].push(el.value);
+          }else{
+            data.fields[el.name]=el.value;
+          }
+        }
+      });
+      return data;
+    }
+
+    function deserializeForm(form, data){
+      if(!data) return;
+      // 還原文字/數字欄位
+      Object.keys(data.fields||{}).forEach(n=>{
+        const els = form.querySelectorAll(`[name="${n}"]`);
+        if(Array.isArray(data.fields[n])){
+          els.forEach((el,i)=>{ if(i<data.fields[n].length) el.value = data.fields[n][i]; });
+        }else{
+          els.forEach((el,i)=>{ if(i===0) el.value = data.fields[n]; });
+        }
+      });
+      // 還原 radio
+      Object.keys(data.radios||{}).forEach(n=>{
+        const idx = data.radios[n];
+        const radios = form.querySelectorAll(`input[type="radio"][name="${n}"]`);
+        if(idx>=0 && idx<radios.length){ radios[idx].checked = true; }
+      });
+      // 還原 checkbox
+      Object.keys(data.checks||{}).forEach(n=>{
+        const el = form.querySelector(`input[type="checkbox"][name="${n}"]`);
+        if(el){ el.checked = !!data.checks[n]; }
+      });
+      // **依照需求：不要在這裡呼叫 check_jen / refer**
+    }
+
+    function saveData(form){
+      const json = serializeForm(form);
+      const filename = prompt("請輸入要儲存的檔名（.json）","glaze_data.json") || "glaze_data.json";
+      const blob = new Blob([JSON.stringify(json,null,2)], {type:"application/json"});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename.endsWith('.json')?filename:(filename+'.json');
+      document.body.appendChild(a);
+      a.click();
+      URL.revokeObjectURL(a.href);
+      a.remove();
+    }
+
+    function handleFile(input, form){
+      const file = input.files && input.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = e=>{
+        try{
+          const data = JSON.parse(e.target.result);
+          deserializeForm(form, data);
+          // 載入後把狀態推入歷史（不觸發任何副程式）
+          pushSnapshot(form);
+          alert("載入完成！");
+        }catch(err){
+          alert("檔案格式不正確，請選擇本程式匯出的 JSON。");
+        }
+        input.value = "";
+      };
+      reader.readAsText(file);
+    }
+  </script>
+  <!-- ★★★ 新增腳本結束 ★★★ -->
+
+  <!-- ★★★ 新增：Undo / Redo（上一步 / 下一步），50ms 版本，且不改動原本邏輯 ★★★ -->
+  <script>
+    let historyStack = [];
+    let redoStack = [];
+    let saveTimer = null;
+
+    function pushSnapshot(form){
+      const snapshot = JSON.stringify(serializeForm(form));
+      // 避免與上一筆完全一樣
+      if(historyStack.length === 0 || historyStack[historyStack.length-1] !== snapshot){
+        historyStack.push(snapshot);
+        if(historyStack.length > 200) historyStack.shift(); // 避免無限成長
+      }
+      // 任何新動作都清空 redo
+      redoStack = [];
+    }
+
+    function saveState(form){
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(()=>{
+        pushSnapshot(form);
+      },50); // ← 依你的需求：50ms
+    }
+
+    function applySnapshot(form, snapshot){
+      try{
+        const data = JSON.parse(snapshot);
+        deserializeForm(form, data); // 不會觸發 check_jen / refer
+      }catch(e){}
+    }
+
+    function undo(form){
+      if(historyStack.length <= 1) return; // 沒有更多可回復
+      const current = historyStack.pop();
+      redoStack.push(current);
+      const prev = historyStack[historyStack.length-1];
+      applySnapshot(form, prev);
+    }
+
+    function redo(form){
+      if(redoStack.length === 0) return;
+      const snap = redoStack.pop();
+      historyStack.push(snap);
+      applySnapshot(form, snap);
+    }
+
+    // 初始化：掛事件、不動原本邏輯
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const form = document.forms[0];
+      if(!form) return;
+
+      // 初始狀態
+      pushSnapshot(form);
+
+      // 任何輸入都存狀態（包含 radio / checkbox）
+      form.addEventListener('input', ()=>saveState(form), true);
+      form.addEventListener('change', ()=>saveState(form), true);
+
+      // 將會改變表單值的原函式包一層：執行後存狀態
+      [
+        'calculate_segar','calculate_100','reset_data',
+        'ADD_Ca','ADD_Ba','ADD_Zn','ADD_Mg','ADD_Sr',
+        'fill_Ca_min','fill_Mg_min','fill_Al_min','fill_Si_min',
+        'set_default_values','to_int','to_to','bay'
+      ].forEach(fn=>{
+        if(typeof window[fn] === 'function'){
+          const orig = window[fn];
+          window[fn] = function(){
+            const res = orig.apply(this, arguments);
+            // 注意：函式簽章都是 (form, ...)
+            const formArg = arguments[0];
+            if(formArg && formArg.tagName === 'FORM'){
+              saveState(formArg);
+            }else{
+              saveState(form);
+            }
+            return res;
+          }
+        }
+      });
+    });
+  </script>
+  <!-- ★★★ Undo/Redo 新增完畢 ★★★ -->
+
+</body>
+</html>
